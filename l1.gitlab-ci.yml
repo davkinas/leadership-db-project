@@ -1,0 +1,23 @@
+stages:
+  - lint
+  - build
+
+
+lint_sql:
+  stage: lint
+  image: node:14
+  script:
+    - npm install -g sql-linter  # пример установки SQL линтера (если он есть в npm)
+    - sql-linter dump.sql
+  only:
+    - merge_requests
+
+build_docker:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t my-db-image .
+  only:
+    - main
